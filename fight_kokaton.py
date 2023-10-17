@@ -23,8 +23,14 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+
+
 class Explosion:
+    """
+    爆発エフェクトに関するクラス
+    """
     def __init__(self, bomb):
+        # 画像のリストを作成
         self.imgs = [pg.image.load("fig/explosion.gif"), pg.transform.flip(pg.image.load("fig/explosion.gif"), True, False)]
         self.img = self.imgs[0]
         self.rct = self.img.get_rect()
