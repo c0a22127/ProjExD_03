@@ -177,6 +177,7 @@ def main():
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
+    beams = []  # ビームインスタンスを格納するリスト
     beam = None # beamの初期化
     score = Score()
 
@@ -189,7 +190,7 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # キー押下かつ，スペースキーの場合
-                beam = Beam(bird)
+                beams.append(Beam(bird))
         
         screen.blit(bg_img, [0, 0])
         
@@ -201,16 +202,27 @@ def main():
                 time.sleep(1)
                 return
                 
-        for bomb in bombs:
-            if beam is not None and bomb is not None:
-                if beam.rct.colliderect(bomb.rct):
-                    beam = None
-                    bomb = None
-                    score.setScore(1)
-                    bird.change_img(6, screen)
-                    pg.display.update()
+        # ビームと爆弾の衝突判定
+        for i, bomb in enumerate(bombs):
+            for beam in beams:
+                if bomb is not None:
+                    if beam.rct.colliderect(bomb.rct):
+                        # ビームが爆弾に当たった場合， ビームを消去し，爆弾をNoneにする
+                        beams.remove(beam)
+                        bombs[i] = None
+                        score.setScore(1)
+                        bird.change_img(6, screen)
+                        pg.display.update()
 
+        beams = [beam for beam in beams if beam is not None]
         bombs = [bomb for bomb in bombs if bomb is not None]
+
+        for beam in beams:
+            yoko, tate = check_bound(beam.rct)
+            if not yoko:
+                # ビームが画面外に出た場合，ビームを消去する
+                beams.remove(beam)
+
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
@@ -219,7 +231,7 @@ def main():
             bomb.update(screen)
 
         # ビームインスタンスが生成されている場合
-        if beam is not None:
+        for beam in beams:
             beam.update(screen)
 
         score.update(screen)
