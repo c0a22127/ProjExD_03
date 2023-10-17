@@ -24,24 +24,27 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 class Score:
+    """
+    スコアに関するクラス
+    """
+
+    score: int = 0  # スコア
+
     def __init__(self):
-        self.score = 0
         self.font = pg.font.SysFont("Meiriyo", 50)
         self.color = (0, 0, 255)
-        self.img = self.font.render(f"SCORE: {self.score}", 0, self.color)
+        self.img = self.font.render(f"SCORE: {__class__.score}", 0, self.color)
         self.rct = self.img.get_rect()
         self.rct.center = (100, HEIGHT - 50)
 
     def update(self, screen: pg.Surface):
-        self.img = self.font.render(f"SCORE: {self.score}", 0, self.color)
+        self.img = self.font.render(f"SCORE: {__class__.score}", 0, self.color)
         screen.blit(self.img, self.rct)
 
-class Explosion:
-    def __init__(self):
-        self.img = pg.image.load("fig/explosion.png")
-        self.rct = self.img.get_rect()
-        self.rct.center = (WIDTH/2, HEIGHT/2)
-        self.vx, self.vy = 0, 0
+    # スコアを設定するクラスメソッド
+    @classmethod
+    def setScore(cls, value):
+        cls.score += value
 
 class Beam:
     """
@@ -203,7 +206,7 @@ def main():
                 if beam.rct.colliderect(bomb.rct):
                     beam = None
                     bomb = None
-                    score.score += 1
+                    score.setScore(1)
                     bird.change_img(6, screen)
                     pg.display.update()
 
