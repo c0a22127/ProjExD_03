@@ -23,6 +23,26 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+class Score:
+    def __init__(self):
+        self.score = 0
+        self.font = pg.font.SysFont("Meiriyo", 50)
+        self.color = (0, 0, 255)
+        self.img = self.font.render(f"SCORE: {self.score}", 0, self.color)
+        self.rct = self.img.get_rect()
+        self.rct.center = (100, HEIGHT - 50)
+
+    def update(self, screen: pg.Surface):
+        self.img = self.font.render(f"SCORE: {self.score}", 0, self.color)
+        screen.blit(self.img, self.rct)
+
+class Explosion:
+    def __init__(self):
+        self.img = pg.image.load("fig/explosion.png")
+        self.rct = self.img.get_rect()
+        self.rct.center = (WIDTH/2, HEIGHT/2)
+        self.vx, self.vy = 0, 0
+
 class Beam:
     """
     ビームに関するクラス
@@ -155,6 +175,7 @@ def main():
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
     beam = None # beamの初期化
+    score = Score()
 
     clock = pg.time.Clock()
     tmr = 0
@@ -182,6 +203,7 @@ def main():
                 if beam.rct.colliderect(bomb.rct):
                     beam = None
                     bomb = None
+                    score.score += 1
                     bird.change_img(6, screen)
                     pg.display.update()
 
@@ -196,6 +218,8 @@ def main():
         # ビームインスタンスが生成されている場合
         if beam is not None:
             beam.update(screen)
+
+        score.update(screen)
 
         pg.display.update()
         tmr += 1
