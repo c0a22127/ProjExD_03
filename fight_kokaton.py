@@ -211,6 +211,9 @@ def main():
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # キー押下かつ，スペースキーの場合
                 beams.append(Beam(bird))
+            if event.type == pg.KEYDOWN and event.key == pg.K_i:
+                # キー押下かつ，iキーの場合
+                bombs.append(Bomb())
         
         screen.blit(bg_img, [0, 0])
         
