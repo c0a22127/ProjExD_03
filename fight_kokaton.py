@@ -1,14 +1,11 @@
 import random
 import sys
 import time
-
 import pygame as pg
-
 
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
 NUM_OF_BOMBS = 5 # 爆弾の数
-
 
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
@@ -22,7 +19,6 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     if obj_rct.top < 0 or HEIGHT < obj_rct.bottom:
         tate = False
     return yoko, tate
-
 
 
 class Explosion:
@@ -46,9 +42,7 @@ class Score:
     """
     スコアに関するクラス
     """
-
     score: int = 0  # スコア
-
     def __init__(self):
         self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 50)
         self.color = (0, 0, 255)
@@ -59,11 +53,11 @@ class Score:
     def update(self, screen: pg.Surface):
         self.img = self.font.render(f"SCORE: {__class__.score}", 0, self.color)
         screen.blit(self.img, self.rct)
-
     # スコアを設定するクラスメソッド
     @classmethod
     def setScore(cls, value):
         cls.score += value
+
 
 class Beam:
     """
@@ -91,6 +85,7 @@ class Beam:
         """
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
+
 
 class Bird:
     """
@@ -214,9 +209,9 @@ def main():
             if event.type == pg.KEYDOWN and event.key == pg.K_i:
                 # キー押下かつ，iキーの場合
                 bombs.append(Bomb())
-        
+
         screen.blit(bg_img, [0, 0])
-        
+
         for bomb in bombs:
             if bird.rct.colliderect(bomb.rct):
                 # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
@@ -246,8 +241,7 @@ def main():
             if not yoko:
                 # ビームが画面外に出た場合，ビームを消去する
                 beams.remove(beam)
-
-
+                
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
 
