@@ -23,6 +23,19 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+class Explosion:
+    def __init__(self, bomb):
+        self.imgs = [pg.image.load("fig/explosion.gif"), pg.transform.flip(pg.image.load("fig/explosion.gif"), True, False)]
+        self.img = self.imgs[0]
+        self.rct = self.img.get_rect()
+        self.rct.center = bomb.rct.center
+        self.life = 10
+
+    def update(self, screen: pg.Surface):
+        self.life -= 1
+        self.img = self.imgs[self.life % 2]
+        screen.blit(self.img, self.rct)
+
 class Score:
     """
     スコアに関するクラス
@@ -31,7 +44,7 @@ class Score:
     score: int = 0  # スコア
 
     def __init__(self):
-        self.font = pg.font.SysFont("Meiriyo", 50)
+        self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 50)
         self.color = (0, 0, 255)
         self.img = self.font.render(f"SCORE: {__class__.score}", 0, self.color)
         self.rct = self.img.get_rect()
@@ -180,6 +193,7 @@ def main():
     beams = []  # ビームインスタンスを格納するリスト
     beam = None # beamの初期化
     score = Score()
+    explosions = [] # 爆発エフェクトを格納するリスト
 
     clock = pg.time.Clock()
     tmr = 0
@@ -211,6 +225,7 @@ def main():
                         beams.remove(beam)
                         bombs[i] = None
                         score.setScore(1)
+                        explosions.append(Explosion(bomb))
                         bird.change_img(6, screen)
                         pg.display.update()
 
@@ -235,6 +250,11 @@ def main():
             beam.update(screen)
 
         score.update(screen)
+
+        for explosion in explosions:
+            explosion.update(screen)
+            if explosion.life <= 0: 
+                explosions.remove(explosion)
 
         pg.display.update()
         tmr += 1
